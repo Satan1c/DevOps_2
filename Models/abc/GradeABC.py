@@ -1,10 +1,12 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Self
+
+from Models.abc.JsonSerializableABC import JsonSerializableABC
 
 
 @dataclass
-class GradeABC(ABC):
+class GradeABC(JsonSerializableABC, ABC):
 	_grades: Dict[str, float]
 
 	def get_grade(self, subject: str) -> float:
@@ -14,9 +16,9 @@ class GradeABC(ABC):
 	def avg_grade(self) -> float:
 		return sum(self._grades.values()) / len(self._grades)
 
-	@staticmethod
-	def from_json(data: dict) -> None:
-		_grades = data
+	@classmethod
+	def from_json(cls, json_data: dict) -> Self:
+		_grades = json_data
 
 	@abstractmethod
 	def to_json(self) -> dict:

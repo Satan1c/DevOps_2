@@ -4,9 +4,9 @@ from Models.Grade import Grade
 
 
 class WantedGrade(Grade):
-	@staticmethod
-	def from_json(data: dict) -> "WantedGrade":
-		return WantedGrade(data)
+	@classmethod
+	def from_json(cls, json_data: dict) -> "WantedGrade":
+		return WantedGrade(json_data)
 
 	def set_grade(self, subject: str, grade: float):
 		self._grades[subject] = max(grade, 0)

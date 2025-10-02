@@ -1,13 +1,14 @@
 import uuid
-from dataclasses import dataclass
 from datetime import datetime
 from uuid import UUID
 
+from Models.abc.JsonSerializableABC import JsonSerializableABC
 
-class Student:
-	def __init__(self, first_name: str, second_name: str, last_name: str, group: UUID, bd: datetime, uid: UUID = None):
+
+class Student(JsonSerializableABC):
+	def __init__(self, first_name: str, second_name: str, last_name: str, group: str, bd: datetime, uid: str = None):
 		if uid is None:
-			uid = uuid.uuid4()
+			uid = str(uuid.uuid4())
 		self.__uid = uid
 		self.__first_name = first_name.title()
 		self.__second_name = second_name.title()
@@ -19,7 +20,7 @@ class Student:
 		return str(self.to_json())
 
 	@property
-	def uid(self) -> UUID:
+	def uid(self) -> str:
 		return self.__uid
 
 	@property
@@ -27,7 +28,7 @@ class Student:
 		return f"{self.__last_name} {self.__first_name} {self.__second_name}"
 
 	@property
-	def group(self) -> UUID:
+	def group(self) -> str:
 		return self.__group
 
 	@property
@@ -35,16 +36,16 @@ class Student:
 		return self.__bd
 
 	@group.setter
-	def group(self, group: UUID) -> None:
+	def group(self, group: str) -> None:
 		self.group = group
 
 	@staticmethod
-	def from_json(uid: UUID, data: dict) -> "Student":
+	def from_json(uid: str, data: dict) -> "Student":
 		return Student(
-			str(data["first_name"]),
-			str(data["second_name"]),
-			str(data["last_name"]),
-			UUID(data["group"]),
+			data["first_name"],
+			data["second_name"],
+			data["last_name"],
+			data["group"],
 			datetime.fromisoformat(data["bd"]),
 			uid
 		)

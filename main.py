@@ -9,38 +9,48 @@ from Models.Student import Student
 from Models.WantedGrades import WantedGrade
 
 storage = os.path.join(os.path.abspath(os.path.dirname(__file__)), "Storage")
+if not os.path.exists(storage):
+	os.mkdir(storage)
 
 groups: Dict[str, uuid.UUID] = {"ПДМ-51": uuid.uuid4()}
 
 db = DbManager(storage)
 db.load()
 
-group_id: uuid.UUID = groups["ПДМ-51"]
-student_id: uuid.UUID = uuid.uuid4()
-db.save_student(
+group_id: str = str(groups["ПДМ-51"])
+student_id: str = str(uuid.uuid4())
+
+db.groups_manager.add_student(group_id, student_id)
+db.students_manager.add_student(
 	Student(
-		"Олександр", "Геннадійович", "Федотов",
+		"Олександр",
+		"Геннадійович",
+		"Федотов",
 		group_id,
-		datetime.fromisoformat("2003-03-12"),
+		datetime.fromisoformat("2003-09-12"),
 		student_id
 	)
 )
 
-db.save_grades(student_id, Grade({
-	"Математика": 65.0,
-	"Фізика": 60.0,
-	"Програмування": 100.0
-}))
-db.save_wanted_grades(student_id, WantedGrade({
-	"Математика": 75.0,
-	"Фізика": 65.0,
-	"Програмування": 100.0
-}))
+db.grades_manager.add_grade(
+	student_id,
+	Grade(
+		{
+			"Математика": 3,
+			"Фізика": 3,
+			"Программування": 5
+		},
+	)
+)
+db.wanted_grades_manager.add_wanted_grade(
+	student_id,
+	WantedGrade(
+		{
+			"Математика": 4,
+			"Фізика": 4,
+			"Программування": 5
+		},
+	)
+)
 
-student = db.get_student(student_id)
-print(student.student)
-print(student.student.full_name)
-print(student.grades)
-print(student.grades.avg_grade())
-print(student.wanted_grades)
-print(student.wanted_grades.avg_grade())
+db.save()
